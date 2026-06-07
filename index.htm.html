@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roraima na Rede | Luiz Valério</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal:       #00c2c7;
+    --teal-dark:  #0097a7;
+    --teal-deep:  #005f73;
+    --teal-glow:  rgba(0,194,199,0.22);
+    --blue:       #1a3a8f;
+    --blue-dark:  #0d1f5c;
+    --white:      #f0fafc;
+    --white-dim:  rgba(240,250,252,0.75);
+    --white-faint:rgba(240,250,252,0.12);
+    --black:      #080e1a;
+    --gray:       #0f1e2e;
+    --gray-mid:   #162538;
+    --gray-light: #6a93a8;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--black);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,194,199,0.13) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 90%, rgba(26,58,143,0.2) 0%, transparent 60%);
+  }
+
+  /* noise */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.6;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 3rem 1.5rem 1.8rem;
+  }
+
+  .logo-ring {
+    position: relative;
+    width: 100px; height: 100px;
+    animation: fadeDown .7s ease both;
+  }
+
+  .logo-ring::before {
+    content: '';
+    position: absolute; inset: -4px;
+    border-radius: 50%;
+    background: conic-gradient(var(--teal), var(--blue), var(--teal));
+    animation: spin 6s linear infinite;
+    z-index: 0;
+  }
+
+  .logo-ring img {
+    position: relative; z-index: 1;
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--black);
+    box-shadow: 0 0 28px rgba(0,194,199,0.35), 0 8px 32px rgba(0,0,0,0.6);
+    display: block;
+  }
+
+  .live-dot {
+    position: absolute; bottom: 5px; right: 5px; z-index: 2;
+    width: 14px; height: 14px;
+    background: #22d65a;
+    border-radius: 50%;
+    border: 2px solid var(--black);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .portal-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    letter-spacing: 0.09em;
+    color: var(--white);
+    margin-top: 1.1rem;
+    text-align: center;
+    animation: fadeDown .7s .1s ease both;
+    line-height: 1;
+  }
+  .portal-name span { color: var(--teal); }
+
+  .tagline {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--gray-light);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-top: 0.45rem;
+    text-align: center;
+    animation: fadeDown .7s .2s ease both;
+  }
+
+  /* ─── STRIPE ─── */
+  .stripe {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--teal), rgba(0,194,199,0.4), var(--teal), transparent);
+    margin: 1.5rem 0;
+    position: relative; z-index: 1;
+  }
+
+  /* ─── LAYOUT ─── */
+  .section {
+    padding: 0 1.2rem;
+    max-width: 480px;
+    margin: 0 auto;
+    position: relative; z-index: 1;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.28em;
+    color: var(--teal);
+    text-transform: uppercase;
+    margin-bottom: 0.85rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .section-title::after {
+    content: ''; flex: 1; height: 1px;
+    background: rgba(0,194,199,0.2);
+  }
+
+  /* ─── CTA ─── */
+  .cta-portal {
+    display: block;
+    text-align: center;
+    background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 100%);
+    color: var(--black);
+    font-weight: 700;
+    text-decoration: none;
+    padding: 1rem;
+    border-radius: 12px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.14em;
+    margin-bottom: 1.8rem;
+    position: relative; overflow: hidden;
+    animation: fadeUp .7s .2s ease both;
+    box-shadow: 0 4px 30px rgba(0,194,199,0.35), 0 0 0 1px rgba(0,194,199,0.2);
+    transition: all .2s;
+  }
+  .cta-portal::after {
+    content: '';
+    position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: shimmer 2.5s ease infinite;
+  }
+  .cta-portal:hover { transform: scale(1.015); box-shadow: 0 6px 40px rgba(0,194,199,0.5); }
+
+  /* ─── SOCIAL GRID ─── */
+  .social-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem;
+    margin-bottom: 1.8rem;
+    animation: fadeUp .7s .3s ease both;
+  }
+
+  .social-btn {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.75rem 1rem; border-radius: 10px;
+    text-decoration: none; font-size: 0.82rem; font-weight: 500;
+    border: 1px solid var(--white-faint);
+    background: var(--gray); color: var(--white);
+    position: relative; overflow: hidden; transition: all .2s;
+  }
+  .social-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--btn-bg, rgba(0,194,199,0.08));
+    opacity: 0; transition: opacity .2s;
+  }
+  .social-btn:hover::before { opacity: 1; }
+  .social-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    border-color: rgba(0,194,199,0.35);
+  }
+  .social-btn svg { flex-shrink: 0; width: 18px; height: 18px; }
+  .social-btn.full { grid-column: 1 / -1; }
+
+  /* ─── TICKER ─── */
+  .ticker-wrap {
+    width: 100%; overflow: hidden;
+    background: linear-gradient(90deg, var(--teal-deep), var(--teal-dark), var(--teal-deep));
+    padding: 0.45rem 0; margin-bottom: 1.8rem; position: relative; z-index: 1;
+  }
+  .ticker {
+    display: flex; gap: 3rem;
+    animation: ticker 32s linear infinite; white-space: nowrap;
+  }
+  .ticker-item {
+    font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(240,250,252,0.9); flex-shrink: 0;
+  }
+  .ticker-item::before { content: '◆  '; color: rgba(0,194,199,0.6); }
+
+  /* ─── NEWS ─── */
+  .news-section { margin-bottom: 2rem; animation: fadeUp .7s .4s ease both; }
+  .news-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+  .news-card {
+    display: flex; gap: 0.75rem; align-items: flex-start;
+    padding: 0.75rem 0.9rem;
+    background: var(--gray); border-radius: 10px;
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-left: 3px solid var(--teal-dark);
+    transition: all .2s; cursor: pointer;
+  }
+  .news-card:hover {
+    background: var(--gray-mid);
+    border-left-color: var(--teal);
+    transform: translateX(3px);
+    box-shadow: 0 4px 16px rgba(0,194,199,0.12);
+  }
+  .news-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem; color: rgba(0,194,199,0.3);
+    line-height: 1; min-width: 1.8rem; text-align: right;
+  }
+  .news-content { flex: 1; }
+  .news-tag {
+    font-size: 0.62rem; font-weight: 600;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--teal); margin-bottom: 0.2rem;
+  }
+  .news-title {
+    font-size: 0.82rem; font-weight: 500;
+    color: var(--white); line-height: 1.4;
+    display: -webkit-box; -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .news-loading, .news-error {
+    text-align: center; padding: 2rem 1rem;
+    color: var(--gray-light); font-size: 0.85rem;
+  }
+  .spinner {
+    width: 28px; height: 28px;
+    border: 2px solid rgba(0,194,199,0.2);
+    border-top-color: var(--teal);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+    margin: 0 auto 0.75rem;
+  }
+
+  /* ─── REFRESH ─── */
+  .refresh-btn {
+    display: flex; align-items: center; gap: 0.4rem;
+    background: none;
+    border: 1px solid rgba(0,194,199,0.3);
+    color: var(--teal); font-size: 0.7rem;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.35rem 0.8rem; border-radius: 6px;
+    cursor: pointer; margin-left: auto; margin-bottom: 0.6rem;
+    transition: all .2s;
+  }
+  .refresh-btn:hover { background: rgba(0,194,199,0.08); }
+  .refresh-btn svg { width: 12px; height: 12px; }
+
+  /* ─── CONTACT ─── */
+  .contact-section { margin-bottom: 2.5rem; animation: fadeUp .7s .5s ease both; }
+  .contact-card {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.85rem 1rem; background: var(--gray); border-radius: 10px;
+    text-decoration: none; color: var(--white);
+    border: 1px solid rgba(255,255,255,0.05); transition: all .2s; margin-bottom: 0.6rem;
+  }
+  .contact-card:hover {
+    background: var(--gray-mid);
+    border-color: rgba(0,194,199,0.3);
+    transform: translateX(3px);
+    box-shadow: 0 4px 16px rgba(0,194,199,0.1);
+  }
+  .contact-icon {
+    width: 36px; height: 36px;
+    background: rgba(0,194,199,0.1); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .contact-icon svg { width: 16px; height: 16px; color: var(--teal); }
+  .contact-label { font-size: 0.7rem; color: var(--gray-light); letter-spacing: 0.05em; }
+  .contact-value { font-size: 0.85rem; font-weight: 500; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    text-align: center; padding: 1.5rem 1rem 2.5rem;
+    color: var(--gray-light); font-size: 0.7rem;
+    letter-spacing: 0.05em; position: relative; z-index: 1;
+  }
+  footer strong { color: var(--teal); }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeDown { from { opacity:0; transform:translateY(-14px) } to { opacity:1; transform:translateY(0) } }
+  @keyframes fadeUp   { from { opacity:0; transform:translateY(14px)  } to { opacity:1; transform:translateY(0) } }
+  @keyframes spin     { to { transform: rotate(360deg) } }
+  @keyframes pulse    { 0%,100% { box-shadow:0 0 0 0 rgba(34,214,90,.45) } 50% { box-shadow:0 0 0 5px rgba(34,214,90,0) } }
+  @keyframes shimmer  { to { left:150% } }
+  @keyframes ticker   { from { transform:translateX(0) } to { transform:translateX(-50%) } }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="logo-ring">
+    <img src="data:image/jpeg;base64,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" alt="Roraima na Rede">
+    <div class="live-dot"></div>
+  </div>
+  <div class="portal-name">RORAIMA<span>NA REDE</span></div>
+  <div class="tagline">O portal de notícias de Roraima · Luiz Valério</div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span class="ticker-item">Últimas notícias de Roraima</span>
+    <span class="ticker-item">Política e Sociedade</span>
+    <span class="ticker-item">Eleição Suplementar</span>
+    <span class="ticker-item">Boa Vista ao vivo</span>
+    <span class="ticker-item">Concursos e Empregos</span>
+    <span class="ticker-item">Esportes e Cultura</span>
+    <span class="ticker-item">Últimas notícias de Roraima</span>
+    <span class="ticker-item">Política e Sociedade</span>
+    <span class="ticker-item">Eleição Suplementar</span>
+    <span class="ticker-item">Boa Vista ao vivo</span>
+    <span class="ticker-item">Concursos e Empregos</span>
+    <span class="ticker-item">Esportes e Cultura</span>
+  </div>
+</div>
+
+<div class="section">
+
+  <!-- CTA PORTAL -->
+  <a class="cta-portal" href="https://www.roraimanarede.com.br" target="_blank">
+    🔵 ACESSAR O PORTAL
+  </a>
+
+  <!-- SOCIAL -->
+  <div class="section-title">Redes Sociais</div>
+  <div class="social-grid">
+
+    <a class="social-btn" href="https://instagram.com/roraimanaredeoficial" target="_blank" style="--btn-bg:rgba(214,41,118,0.1)">
+      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+      Instagram
+    </a>
+
+    <a class="social-btn" href="https://facebook.com/portalroraimanarede" target="_blank" style="--btn-bg:rgba(24,119,242,0.1)">
+      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      Facebook
+    </a>
+
+    <a class="social-btn" href="https://youtube.com/roraimanarede" target="_blank" style="--btn-bg:rgba(255,40,40,0.09)">
+      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      YouTube
+    </a>
+
+    <a class="social-btn" href="https://twitter.com/luiz_valerio" target="_blank" style="--btn-bg:rgba(29,161,242,0.08)">
+      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      X / Twitter
+    </a>
+
+    <a class="social-btn full" href="https://tiktok.com/luizvalerio" target="_blank" style="--btn-bg:rgba(105,201,208,0.08)">
+      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+      TikTok · @luizvalerio
+    </a>
+
+  </div>
+
+  <div class="stripe"></div>
+
+  <!-- NEWS -->
+  <div class="news-section">
+    <div class="section-title" style="margin-bottom:.5rem">Últimas Matérias</div>
+    <button class="refresh-btn" onclick="loadNews(true)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+      Atualizar
+    </button>
+    <div class="news-list" id="news-list">
+      <div class="news-loading"><div class="spinner"></div>Carregando últimas notícias…</div>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="contact-section">
+    <div class="section-title">Contato</div>
+
+    <a class="contact-card" href="https://www.roraimanarede.com.br/contato" target="_blank">
+      <div class="contact-icon">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+      </div>
+      <div>
+        <div class="contact-label">E-mail / Formulário</div>
+        <div class="contact-value">Fale com a Redação</div>
+      </div>
+    </a>
+
+    <a class="contact-card" href="https://wa.me/559592069155" target="_blank">
+      <div class="contact-icon">
+        <svg fill="currentColor" viewBox="0 0 24 24" style="color:var(--teal)"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      </div>
+      <div>
+        <div class="contact-label">WhatsApp</div>
+        <div class="contact-value">Enviar Mensagem</div>
+      </div>
+    </a>
+
+    <a class="contact-card" href="https://www.roraimanarede.com.br/assine" target="_blank">
+      <div class="contact-icon">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>
+      </div>
+      <div>
+        <div class="contact-label">Assinatura Premium</div>
+        <div class="contact-value">Assine o Portal</div>
+      </div>
+    </a>
+  </div>
+
+</div>
+
+<footer>
+  <div class="stripe" style="margin-bottom:1rem"></div>
+  © 2026 <strong>Roraima na Rede</strong> · Luiz Valério<br>
+  O portal de notícias de Roraima
+</footer>
+
+<script>
+const FALLBACK_NEWS = [
+  { title: 'Cheia do Rio Branco leva Defesa Civil a retirar família de área de risco no bairro Cauamé', url: 'https://www.roraimanarede.com.br/noticia/cheia-do-rio-branco-leva-defesa-civil-a-retirar-familia-de-area-de-risco-no-bairro-cauame', tag: 'Boa Vista' },
+  { title: 'Chuvas ameaçam logística das eleições e TRE pede apoio aéreo ao TSE em Roraima', url: 'https://www.roraimanarede.com.br/noticia/chuvas-ameacam-logistica-das-eleicoes-e-tre-pede-apoio-aereo-ao-tse-em-roraima', tag: 'Eleição' },
+  { title: 'Enem 2026: inscrições estão abertas até hoje na Página do Participante', url: 'https://www.roraimanarede.com.br/noticia/enem-2026-inscricoes-estao-abertas-ate-hoje-na-pagina-do-participante', tag: 'Educação' },
+  { title: 'Ítalo Otávio se afasta da Câmara para preparar candidatura a deputado federal; Renato Queiroz assume mandato', url: 'https://www.roraimanarede.com.br/noticia/italo-otavio-se-afasta-da-camara-para-preparar-candidatura-a-deputado-federal-renato-queiroz-assume-mandato', tag: 'Política' },
+  { title: 'Voto nulo não anula eleição e não impede posse de candidato, esclarecem especialistas', url: 'https://www.roraimanarede.com.br/noticia/voto-nulo-nao-anula-eleicao-e-nao-impede-posse-de-candidato-esclarecem-especialistas', tag: 'Eleição' },
+  { title: 'Soldado Sampaio estreia no horário eleitoral destacando ações de governo e propostas para mandato tampão', url: 'https://www.roraimanarede.com.br/noticia/soldado-sampaio-estreia-no-horario-eleitoral-destacando-acoes-de-governo-e-propostas-para-mandato-tampao', tag: 'Política' },
+  { title: 'Mais de 800 vagas: FUNAI avança com novo processo seletivo temporário', url: 'https://www.roraimanarede.com.br/noticia/mais-de-800-vagas-funai-avanca-com-novo-processo-seletivo-temporario', tag: 'Empregos' },
+  { title: 'Concurso da Assembleia de Roraima abre 226 vagas com salários de até R$ 39 mil', url: 'https://www.roraimanarede.com.br/noticia/concurso-da-assembleia-de-roraima-abre-226-vagas-com-salarios-de-ate-r-39-mil', tag: 'Concursos' },
+  { title: 'Denarium muda de partido, rompe com Hiran e reposiciona disputa ao Senado em Roraima', url: 'https://www.roraimanarede.com.br/noticia/denarium-muda-de-partido-rompe-com-hiran-e-reposiciona-disputa-ao-senado-em-roraima', tag: 'Política' },
+  { title: 'Golpe do falso advogado avança em Roraima e faz vítimas com dados reais de processos', url: 'https://www.roraimanarede.com.br/noticia/golpe-do-falso-advogado-avanca-em-roraima-e-faz-vitimas-com-dados-reais-de-processos', tag: 'Justiça' },
+];
+
+function renderNews(items) {
+  document.getElementById('news-list').innerHTML = items.map((n, i) => `
+    <a class="news-card" href="${n.url}" target="_blank">
+      <div class="news-number">0${i+1}</div>
+      <div class="news-content">
+        <div class="news-tag">${n.tag}</div>
+        <div class="news-title">${n.title}</div>
+      </div>
+    </a>`).join('');
+}
+
+async function loadNews(force = false) {
+  const container = document.getElementById('news-list');
+  const cached = sessionStorage.getItem('rnr_news');
+  const cachedAt = sessionStorage.getItem('rnr_news_at');
+  if (!force && cached && cachedAt && (Date.now() - parseInt(cachedAt)) < 900000) {
+    return renderNews(JSON.parse(cached));
+  }
+  container.innerHTML = '<div class="news-loading"><div class="spinner"></div>Buscando notícias…</div>';
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 1000,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{ role: 'user', content: `Acesse https://www.roraimanarede.com.br e liste as 10 últimas matérias publicadas. Retorne SOMENTE um JSON válido sem markdown: [{"title":"...","url":"url completa","tag":"categoria"}]. Categorias: Política, Saúde, Educação, Economia, Roraima, Boa Vista, Esportes, Justiça, Geral, Eleição, Concursos, Empregos.` }]
+      })
+    });
+    const data = await res.json();
+    const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+    const match = text.match(/\[[\s\S]*?\]/);
+    if (match) {
+      const items = JSON.parse(match[0]).slice(0, 10);
+      sessionStorage.setItem('rnr_news', JSON.stringify(items));
+      sessionStorage.setItem('rnr_news_at', Date.now().toString());
+      renderNews(items);
+    } else throw new Error();
+  } catch { renderNews(FALLBACK_NEWS); }
+}
+
+loadNews();
+</script>
+</body>
+</html>
