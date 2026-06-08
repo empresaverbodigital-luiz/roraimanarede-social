@@ -444,6 +444,20 @@
 </footer>
 
 <script>
+// Lista de feeds RSS para tentar em ordem
+const RSS_FEEDS = [
+  'https://www.roraimanarede.com.br/feed',
+  'https://www.roraimanarede.com.br/feed.xml',
+  'https://www.roraimanarede.com.br/rss',
+  'https://www.roraimanarede.com.br/noticias/feed',
+];
+
+// Serviços proxy RSS2JSON para tentar em ordem
+const PROXY_SERVICES = [
+  url => `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&count=10`,
+  url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+];
+
 const FALLBACK_NEWS = [
   { title: 'Cheia do Rio Branco leva Defesa Civil a retirar família de área de risco no bairro Cauamé', url: 'https://www.roraimanarede.com.br/noticia/cheia-do-rio-branco-leva-defesa-civil-a-retirar-familia-de-area-de-risco-no-bairro-cauame', tag: 'Boa Vista' },
   { title: 'Chuvas ameaçam logística das eleições e TRE pede apoio aéreo ao TSE em Roraima', url: 'https://www.roraimanarede.com.br/noticia/chuvas-ameacam-logistica-das-eleicoes-e-tre-pede-apoio-aereo-ao-tse-em-roraima', tag: 'Eleição' },
@@ -457,6 +471,19 @@ const FALLBACK_NEWS = [
   { title: 'Golpe do falso advogado avança em Roraima e faz vítimas com dados reais de processos', url: 'https://www.roraimanarede.com.br/noticia/golpe-do-falso-advogado-avanca-em-roraima-e-faz-vitimas-com-dados-reais-de-processos', tag: 'Justiça' },
 ];
 
+function guessTag(title, category) {
+  const t = (title + ' ' + (category || '')).toLowerCase();
+  if (t.includes('polít') || t.includes('govern') || t.includes('senado') || t.includes('deputad') || t.includes('eleição') || t.includes('elei')) return 'Política';
+  if (t.includes('saúde') || t.includes('hospital') || t.includes('médic')) return 'Saúde';
+  if (t.includes('educa') || t.includes('escola') || t.includes('enem') || t.includes('concurso')) return 'Educação';
+  if (t.includes('econom') || t.includes('empreg') || t.includes('vaga')) return 'Empregos';
+  if (t.includes('esport') || t.includes('futebol') || t.includes('jiu') || t.includes('atletis')) return 'Esportes';
+  if (t.includes('justiç') || t.includes('preso') || t.includes('policia') || t.includes('crime')) return 'Justiça';
+  if (t.includes('boa vista')) return 'Boa Vista';
+  if (t.includes('roraima')) return 'Roraima';
+  return 'Notícia';
+}
+
 function renderNews(items) {
   document.getElementById('news-list').innerHTML = items.map((n, i) => `
     <a class="news-card" href="${n.url}" target="_blank">
@@ -468,6 +495,36 @@ function renderNews(items) {
     </a>`).join('');
 }
 
+async function tryRss2Json(feedUrl) {
+  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}&count=10`;
+  const res = await fetch(apiUrl);
+  const data = await res.json();
+  if (data.status === 'ok' && data.items && data.items.length > 0) {
+    return data.items.slice(0, 10).map(item => ({
+      title: item.title,
+      url: item.link,
+      tag: guessTag(item.title, item.categories ? item.categories[0] : '')
+    }));
+  }
+  return null;
+}
+
+async function tryAllOrigins(feedUrl) {
+  const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(feedUrl)}`;
+  const res = await fetch(proxyUrl);
+  const data = await res.json();
+  if (!data.contents) return null;
+  const parser = new DOMParser();
+  const xml = parser.parseFromString(data.contents, 'text/xml');
+  const items = Array.from(xml.querySelectorAll('item')).slice(0, 10);
+  if (items.length === 0) return null;
+  return items.map(item => ({
+    title: item.querySelector('title')?.textContent || '',
+    url: item.querySelector('link')?.textContent || item.querySelector('guid')?.textContent || '#',
+    tag: guessTag(item.querySelector('title')?.textContent || '', item.querySelector('category')?.textContent || '')
+  }));
+}
+
 async function loadNews(force = false) {
   const container = document.getElementById('news-list');
   const cached = sessionStorage.getItem('rnr_news');
@@ -475,27 +532,32 @@ async function loadNews(force = false) {
   if (!force && cached && cachedAt && (Date.now() - parseInt(cachedAt)) < 900000) {
     return renderNews(JSON.parse(cached));
   }
+
   container.innerHTML = '<div class="news-loading"><div class="spinner"></div>Buscando notícias…</div>';
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514', max_tokens: 1000,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        messages: [{ role: 'user', content: `Acesse https://www.roraimanarede.com.br e liste as 10 últimas matérias publicadas. Retorne SOMENTE um JSON válido sem markdown: [{"title":"...","url":"url completa","tag":"categoria"}]. Categorias: Política, Saúde, Educação, Economia, Roraima, Boa Vista, Esportes, Justiça, Geral, Eleição, Concursos, Empregos.` }]
-      })
-    });
-    const data = await res.json();
-    const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
-    const match = text.match(/\[[\s\S]*?\]/);
-    if (match) {
-      const items = JSON.parse(match[0]).slice(0, 10);
-      sessionStorage.setItem('rnr_news', JSON.stringify(items));
-      sessionStorage.setItem('rnr_news_at', Date.now().toString());
-      renderNews(items);
-    } else throw new Error();
-  } catch { renderNews(FALLBACK_NEWS); }
+
+  // Tenta cada feed com cada serviço proxy
+  for (const feedUrl of RSS_FEEDS) {
+    try {
+      const items = await tryRss2Json(feedUrl);
+      if (items) {
+        sessionStorage.setItem('rnr_news', JSON.stringify(items));
+        sessionStorage.setItem('rnr_news_at', Date.now().toString());
+        return renderNews(items);
+      }
+    } catch(e) {}
+
+    try {
+      const items = await tryAllOrigins(feedUrl);
+      if (items) {
+        sessionStorage.setItem('rnr_news', JSON.stringify(items));
+        sessionStorage.setItem('rnr_news_at', Date.now().toString());
+        return renderNews(items);
+      }
+    } catch(e) {}
+  }
+
+  // Se tudo falhar, usa o fallback
+  renderNews(FALLBACK_NEWS);
 }
 
 loadNews();
