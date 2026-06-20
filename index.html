@@ -444,30 +444,19 @@
 </footer>
 
 <script>
-// Lista de feeds RSS para tentar em ordem
-const RSS_FEEDS = [
-  'https://www.roraimanarede.com.br/feed',
-  'https://www.roraimanarede.com.br/feed.xml',
-  'https://www.roraimanarede.com.br/rss',
-  'https://www.roraimanarede.com.br/noticias/feed',
-];
-
-// Serviços proxy RSS2JSON para tentar em ordem
-const PROXY_SERVICES = [
-  url => `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&count=10`,
-  url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
-];
+// Feed RSS oficial do portal (criado via rss.app)
+const RSS_FEED_URL = 'https://rss.app/feeds/JSpLXFA7zKaWtSbh.xml';
 
 const FALLBACK_NEWS = [
-  { title: 'Cheia do Rio Branco leva Defesa Civil a retirar família de área de risco no bairro Cauamé', url: 'https://www.roraimanarede.com.br/noticia/cheia-do-rio-branco-leva-defesa-civil-a-retirar-familia-de-area-de-risco-no-bairro-cauame', tag: 'Boa Vista' },
-  { title: 'Chuvas ameaçam logística das eleições e TRE pede apoio aéreo ao TSE em Roraima', url: 'https://www.roraimanarede.com.br/noticia/chuvas-ameacam-logistica-das-eleicoes-e-tre-pede-apoio-aereo-ao-tse-em-roraima', tag: 'Eleição' },
-  { title: 'Enem 2026: inscrições estão abertas até hoje na Página do Participante', url: 'https://www.roraimanarede.com.br/noticia/enem-2026-inscricoes-estao-abertas-ate-hoje-na-pagina-do-participante', tag: 'Educação' },
-  { title: 'Ítalo Otávio se afasta da Câmara para preparar candidatura a deputado federal; Renato Queiroz assume mandato', url: 'https://www.roraimanarede.com.br/noticia/italo-otavio-se-afasta-da-camara-para-preparar-candidatura-a-deputado-federal-renato-queiroz-assume-mandato', tag: 'Política' },
-  { title: 'Voto nulo não anula eleição e não impede posse de candidato, esclarecem especialistas', url: 'https://www.roraimanarede.com.br/noticia/voto-nulo-nao-anula-eleicao-e-nao-impede-posse-de-candidato-esclarecem-especialistas', tag: 'Eleição' },
-  { title: 'Soldado Sampaio estreia no horário eleitoral destacando ações de governo e propostas para mandato tampão', url: 'https://www.roraimanarede.com.br/noticia/soldado-sampaio-estreia-no-horario-eleitoral-destacando-acoes-de-governo-e-propostas-para-mandato-tampao', tag: 'Política' },
+  { title: 'Cacique Raoni é transferido de Mato Grosso para São Paulo', url: 'https://www.roraimanarede.com.br/noticia/cacique-raoni-e-transferido-de-mato-grosso-para-sao-paulo', tag: 'Geral' },
+  { title: 'PicPay e BRB são alvos de ação contra suposta fraude em folha do DF', url: 'https://www.roraimanarede.com.br/noticia/picpay-e-brb-sao-alvos-de-acao-contra-suposta-fraude-em-folha-do-df', tag: 'Geral' },
+  { title: 'Em 14 anos, mortes no trânsito por causa de álcool diminuem 19,5%', url: 'https://www.roraimanarede.com.br/noticia/em-14-anos-mortes-no-transito-por-causa-de-alcool-diminuem-19-5', tag: 'Geral' },
+  { title: 'Mega-Sena acumula novamente e prêmio principal vai para R$ 42 milhões', url: 'https://www.roraimanarede.com.br/noticia/mega-sena-acumula-novamente-e-premio-principal-vai-para-r-42-milhoes', tag: 'Geral' },
+  { title: 'Fenômeno de planetas alinhados com a Lua pode ser observado a olho nu', url: 'https://www.roraimanarede.com.br/noticia/fenomeno-de-planetas-alinhados-com-a-lua-pode-ser-observado-a-olho-nu', tag: 'Geral' },
+  { title: 'Deputado do Rio é alvo de operação por suspeita de vínculo com facção', url: 'https://www.roraimanarede.com.br/noticia/deputado-do-rio-e-alvo-de-operacao-por-suspeita-de-vinculo-com-faccao', tag: 'Geral' },
+  { title: 'Denarium muda de partido, rompe com Hiran e reposiciona disputa ao Senado em Roraima', url: 'https://www.roraimanarede.com.br/noticia/denarium-muda-de-partido-rompe-com-hiran-e-reposiciona-disputa-ao-senado-em-roraima', tag: 'Política' },
   { title: 'Mais de 800 vagas: FUNAI avança com novo processo seletivo temporário', url: 'https://www.roraimanarede.com.br/noticia/mais-de-800-vagas-funai-avanca-com-novo-processo-seletivo-temporario', tag: 'Empregos' },
   { title: 'Concurso da Assembleia de Roraima abre 226 vagas com salários de até R$ 39 mil', url: 'https://www.roraimanarede.com.br/noticia/concurso-da-assembleia-de-roraima-abre-226-vagas-com-salarios-de-ate-r-39-mil', tag: 'Concursos' },
-  { title: 'Denarium muda de partido, rompe com Hiran e reposiciona disputa ao Senado em Roraima', url: 'https://www.roraimanarede.com.br/noticia/denarium-muda-de-partido-rompe-com-hiran-e-reposiciona-disputa-ao-senado-em-roraima', tag: 'Política' },
   { title: 'Golpe do falso advogado avança em Roraima e faz vítimas com dados reais de processos', url: 'https://www.roraimanarede.com.br/noticia/golpe-do-falso-advogado-avanca-em-roraima-e-faz-vitimas-com-dados-reais-de-processos', tag: 'Justiça' },
 ];
 
@@ -495,8 +484,8 @@ function renderNews(items) {
     </a>`).join('');
 }
 
-async function tryRss2Json(feedUrl) {
-  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}&count=10`;
+async function tryRss2Json() {
+  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_FEED_URL)}&count=10`;
   const res = await fetch(apiUrl);
   const data = await res.json();
   if (data.status === 'ok' && data.items && data.items.length > 0) {
@@ -509,8 +498,8 @@ async function tryRss2Json(feedUrl) {
   return null;
 }
 
-async function tryAllOrigins(feedUrl) {
-  const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(feedUrl)}`;
+async function tryAllOrigins() {
+  const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(RSS_FEED_URL)}`;
   const res = await fetch(proxyUrl);
   const data = await res.json();
   if (!data.contents) return null;
@@ -535,26 +524,24 @@ async function loadNews(force = false) {
 
   container.innerHTML = '<div class="news-loading"><div class="spinner"></div>Buscando notícias…</div>';
 
-  // Tenta cada feed com cada serviço proxy
-  for (const feedUrl of RSS_FEEDS) {
-    try {
-      const items = await tryRss2Json(feedUrl);
-      if (items) {
-        sessionStorage.setItem('rnr_news', JSON.stringify(items));
-        sessionStorage.setItem('rnr_news_at', Date.now().toString());
-        return renderNews(items);
-      }
-    } catch(e) {}
+  // Tenta rss2json primeiro, depois allorigins como fallback
+  try {
+    const items = await tryRss2Json();
+    if (items) {
+      sessionStorage.setItem('rnr_news', JSON.stringify(items));
+      sessionStorage.setItem('rnr_news_at', Date.now().toString());
+      return renderNews(items);
+    }
+  } catch(e) {}
 
-    try {
-      const items = await tryAllOrigins(feedUrl);
-      if (items) {
-        sessionStorage.setItem('rnr_news', JSON.stringify(items));
-        sessionStorage.setItem('rnr_news_at', Date.now().toString());
-        return renderNews(items);
-      }
-    } catch(e) {}
-  }
+  try {
+    const items = await tryAllOrigins();
+    if (items) {
+      sessionStorage.setItem('rnr_news', JSON.stringify(items));
+      sessionStorage.setItem('rnr_news_at', Date.now().toString());
+      return renderNews(items);
+    }
+  } catch(e) {}
 
   // Se tudo falhar, usa o fallback
   renderNews(FALLBACK_NEWS);
